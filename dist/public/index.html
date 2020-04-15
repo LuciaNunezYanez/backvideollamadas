@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Streaming</title>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <div class="row justify-content-around mb-3">
+                <button class="btn btn-success col-3" id="btnIniciar">Iniciar grabación</button>
+                <button class="btn btn-danger col-3" id="btnDetener">Detener grabación</button>
+
+            </div>
+            <div class="row">
+                <video class="col-6" id="videoLocal" autoplay playsinline controls="false"></video>
+                <video class="col-6" id="video2" controls></video>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
+<script src="js/principal.js">
+</script>
+<script>
+    // let constraintObj = {
+    //     audio: true,
+    //     video: true
+    // }
+
+    // let constraintObj = {
+    //     audio: false,
+    //     video: {
+    //         facingMode: "user",
+    //         width: {
+    //             min: 640,
+    //             ideal: 1280,
+    //             max: 1920
+    //         },
+    //         height: {
+    //             min: 480,
+    //             ideal: 720,
+    //             max: 1080
+    //         }
+    //     }
+    // };
+    // width: 1280, height: 720  -- preference only
+    // facingMode: {exact: "user"}
+    // facingMode: "environment"
+
+    //handle older browsers that might implement getUserMedia in some way
+    // if (navigator.mediaDevices === undefined) {
+    //     navigator.mediaDevices = {};
+    //     navigator.mediaDevices.getUserMedia = function(constraintObj) {
+    //         let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    //         if (!getUserMedia) {
+    //             return Promise.reject(new Error('getUserMedia no está implementado en este navegador'));
+    //         }
+    //         return new Promise(function(resolve, reject) {
+    //             getUserMedia.call(navigator, constraintObj, resolve, reject);
+    //         });
+    //     }
+    // } else {
+    //     console.log('----> Mis dispositivos conectados son: ');
+    //     navigator.mediaDevices.enumerateDevices()
+    //         .then(devices => {
+    //             devices.forEach(device => {
+    //                 console.log(device.kind.toUpperCase(), device.label);
+    //                 //, device.deviceId
+    //             })
+    //             console.log('----------------------------------');
+    //         })
+    //         .catch(err => {
+    //             console.log(err.name, err.message);
+    //         })
+    // }
+
+    // function iniciarGrabacion() {
+    //     console.log('Iniciar grabación');
+    //     mediaRecorder.start();
+    //     console.log(mediaRecorder.state);
+    // }
+
+    // function stopGrabacion() {
+    //     console.log('Stop grabación');
+    //     mediaRecorder.stop();
+    //     console.log(mediaRecorder.state);
+    // }
+
+
+
+    // navigator.mediaDevices.getUserMedia(constraintObj)
+    //     .then(function(mediaStreamObj) {
+    //         console.log('Está aqui');
+    //         //conecta la transmisión de medios al primer elemento de video
+    //         let video = document.querySelector('video');
+    //         if ("srcObject" in video) {
+    //             video.srcObject = mediaStreamObj;
+    //             console.log('Se conectara al: ', video.srcObject);
+    //         } else {
+    //             //versión antigua
+    //             video.src = window.URL.createObjectURL(mediaStreamObj);
+    //         }
+
+    //         video.onloadedmetadata = function(ev) {
+    //             //mostrar en el elemento de video lo que captura la cámara web
+    //             video.play();
+    //         };
+
+    //         //agregar oyentes para guardar video / audio
+    //         let vidSave = document.getElementById('vid2');
+    //         let btnIniciar = document.getElementById('btnIniciar');
+    //         let mediaRecorder = new MediaRecorder(mediaStreamObj);
+    //         let chunks = [];
+
+    //         mediaRecorder.ondataavailable = function(ev) {
+    //             chunks.push(ev.data);
+    //         }
+    //         mediaRecorder.onstop = (ev) => {
+    //             let blob = new Blob(chunks, {
+    //                 'type': 'video/mp4;'
+    //             });
+    //             chunks = [];
+    //             let videoURL = window.URL.createObjectURL(blob);
+    //             vidSave.src = videoURL;
+    //         }
+
+    //         btnIniciar.onclick()
+    //     })
+    //     .catch(function(err) {
+    //         console.log('Error en el catch');
+    //         console.log(err.name, err.message);
+    //     });
+
+    /*********************************
+     getUserMedia devuelve una promesa
+     resolve: devuelve un objeto MediaStream
+     reject devuelve uno de los siguientes errores
+         AbortError: causa genérica desconocida
+         NotAllowedError (SecurityError): permisos rechazados por el usuario
+         NotFoundError - falta una pista de medios
+         NotReadableError: permisos de usuario otorgados pero error de hardware / sistema operativo
+         OverconstrainedError: restricciones de configuración de video que impiden
+         TypeError - audio: falso, video: falso
+    *********************************/
+</script>
+
+<!-- <script>
+    const constraints = {
+        'video': true
+    }
+
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+
+    let getMedia = () => {
+
+        // return new Promise((resolve, reject) => {
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(media) {
+                console.log(media);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        // if (!miMedia) {
+        //     reject('No tiene cámara')
+        // } else {
+        //     console.log('Yes');
+        //     console.log(miMedia);
+        //     resolve(miMedia);
+        // }
+        // });
+
+
+    }
+
+    function abrirCamara() {
+        getMedia();
+    }
+
+
+
+    // let userMedia = function getUserMedia() {
+    //     try {
+    //         return navigator.mediaDevices.getUserMedia(constraints)
+    //             .then(stream => {
+    //                 console.log(stream);
+    //                 return stream;
+    //             })
+    //             .catch(error => {
+    //                 console.log(error);
+    //                 return error;
+    //             });
+
+    //     } catch (error) {
+    //         console.log('catch error 2 - Error por culpa del SSL');
+    //         console.log(error);
+    //     }
+    // }
+
+    // function abrirCamara() {
+    //     let media = userMedia();
+    //     if (media) {
+    //         console.log('media');
+    //         console.log(media);
+
+
+    //         media.then(function(result) {
+    //             console.log('El resultado es: ', result);
+    //         })
+    //     } else {
+    //         console.log('No tiene cámara');
+    //     }
+    // }
+</script> -->
