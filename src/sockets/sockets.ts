@@ -22,21 +22,21 @@ export const SK_USUARIO_CONECTADO = ( cliente: Socket) => {
 
         if (usuario.sala === 'medico' ){ 
             callback(null, {ok: true, message: 'El servidor ha escuchado que entraste a consulta'});
-            console.log(classUsuariosConsulta.getUsuarios());
+            // console.log(classUsuariosConsulta.getUsuarios());
         }
         
     });
 
     // SOCKETS PARA SEÑALIZACION 
     cliente.on('ofertaPaciente', (oferta: any, callback: Function) => {
-        console.log('La oferta del paciente es: ', oferta);
+        // console.log('La oferta del paciente es: ', oferta);
 
         if(oferta.offer){
             // Avisar a todos los medicos en espera que se conectó 
 
             classOfertas.agregarOferta(oferta.link, oferta.offer.type, oferta.offer.sdp);
-            console.log('las ofertas agregadas son: ');
-            console.log(classOfertas.getOfertas());
+            // console.log('las ofertas agregadas son: ');
+            // console.log(classOfertas.getOfertas());
 
             cliente.join(oferta.sala);
             classUsuariosConsulta.agregarUsuario(cliente.id, oferta.sala, oferta.link, oferta.status);
@@ -80,8 +80,8 @@ export const SK_USUARIO_CONECTADO = ( cliente: Socket) => {
 
     cliente.on('respuestaMedico', (answer) => {
         const link = answer.link;
-        console.log('La answer dice:');
-        console.log(answer);
+        // console.log('La answer dice:');
+        // console.log(answer);
 
         if(answer.answer.type === 'answer'){
             // Viene una answer 
@@ -89,6 +89,41 @@ export const SK_USUARIO_CONECTADO = ( cliente: Socket) => {
         }
         
     });
+
+    cliente.on('candidatoPaciente', (candidato: any) => {
+        
+        console.log('Llegó nuevo candidato.. PACIENTE ');
+        console.log(candidato);
+        console.log('----------------------------------------------------------');
+        const usuario =  classUsuariosConsulta.getUsuario(cliente.id);
+        if(usuario && usuario!= undefined){
+            const link = usuario.link;
+            // console.log('CANDIDATO LINK: ', link);
+            console.log(`Va para: candidatoPM${link}`);
+            // console.log('Entro aquí');
+            cliente.broadcast.emit(`candidatoPM${link}`, candidato);
+        }
+    })
+    
+    cliente.on('candidatoMedico', (candidato: any) => {
+        
+        console.log('Llegó nuevo candidato.. MEDICO');
+        console.log(candidato);
+        console.log('----------------------------------------------------------');
+        const usuario =  classUsuariosConsulta.getUsuario(cliente.id);
+        if(usuario && usuario!= undefined){
+            const link = usuario.link;
+            // console.log('CANDIDATO LINK: ', link);
+            console.log(`Va para: candidatoMP${link}`);
+            // console.log('Entro aquí');
+            cliente.broadcast.emit(`candidatoMP${link}`, candidato);
+        }
+    })
+
+    cliente.on('sdp', (sdp: any) => {
+        console.log('Llego SDP');
+        console.log(sdp);
+    })
 
     cliente.on('loginMedicoEspera', (medico: Usuario, callback: Function) => {
         // Se une a la sala 'espera'
